@@ -3,3 +3,10 @@ def bot_token():
 
 def start_text():
     return " Welcome to carpark stats, a bot for you to check the capacity at nearby carparks"
+
+def help_txt():
+    return """
+    These are all the various commands!
+
+    /find <postal code> to .....
+    """
