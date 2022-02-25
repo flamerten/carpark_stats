@@ -74,11 +74,10 @@ def get_carpark_data():
 
         # Save to payload
         payload.append((carpark_name, lat, long, available_spaces, total_spaces, availability))
-
     return payload
 
 # If not imported as a library, run test case
 if __name__ == '__main__':
+    import parking_map
     payload = get_carpark_data()
-    for p in payload:
-        print(p)
+    parking_map.generate_map(list(map(lambda x: (x[1], x[2], x[5]), payload)))
