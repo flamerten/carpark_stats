@@ -17,7 +17,9 @@ from PIL import Image
 from usage_functions import get_carpark_data
 
 def start(update: Update, context: CallbackContext):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=start_text())
+    location_keyboard = KeyboardButton(text="Send Location", request_location=True)
+    reply_markup = ReplyKeyboardMarkup([[location_keyboard,]])
+    context.bot.send_message(chat_id=update.effective_chat.id, text=start_text(), reply_markup=reply_markup)
 
 def unknown(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid Command. Press /help for a list of commands")
