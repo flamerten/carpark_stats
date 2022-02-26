@@ -34,6 +34,7 @@ def find_loc(update: Update, context: CallbackContext):
 
     m = parking_map.generate_map(location,get_carpark_data())
     img_data = m._to_png(5)
-    context.bot.send_photo(chat_id=update.effective_chat.id,
-    caption = "This is the map",
-    photo = img_data)
+    context.bot.send_photo(
+        chat_id=update.effective_chat.id,
+        caption = "This is the map",
+        photo = img_data)
