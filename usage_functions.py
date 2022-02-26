@@ -1,7 +1,11 @@
 import requests
 import datetime
+import time
 import csv
 import json
+import pandas as pd
+from csv import reader
+import os
 
 # Store the carpark information with the carpark name as the dictionary key
 hdb_carpark_info = dict()
@@ -38,6 +42,15 @@ def map_carpark_name_to_latlng(name):
 
 def get_carpark_data():
     today = datetime.datetime.today()
+    now_epoch_time = time.time()
+    
+    file_edit_time = os.path.getmtime('carpark_avail.csv')
+    diff = now_epoch_time-file_edit_time
+    print("Time since last call: ", diff)
+    if diff < 60*5:
+        return read_csv()
+    #except:
+    #    print("No Carpark Avail csv file created")
 
     # Call the API
     params = {
@@ -50,6 +63,7 @@ def get_carpark_data():
     else:
         print(response.status_code)
         print("Error")
+        return False
 
     payload = []
     carpark_data = data['items'][0]['carpark_data']
@@ -76,10 +90,24 @@ def get_carpark_data():
         payload.append((carpark_name, lat, long, available_spaces, total_spaces, availability))
     return payload
 
+def save_to_csv(data):
+    df = pd.DataFrame(data)
+    df.to_csv("carpark_avail.csv",index = False)
+    print("Data saved successfully")
+
+def read_csv():
+    with open('carpark_avail.csv', 'r') as read_obj:
+        csv_reader = reader(read_obj)
+
+        list_of_tuples = list(map(tuple, csv_reader))
+    
+    print(list_of_tuples[:5])
+
 # If not imported as a library, run test case
 if __name__ == '__main__':
     import parking_map
     payload = get_carpark_data()
+    save_to_csv(payload)
     user = (103.92432685169994, 1.3339179186421388)
     rad = 1
     parking_map.generate_map(user, payload, rad)
