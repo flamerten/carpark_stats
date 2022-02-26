@@ -1,35 +1,46 @@
-import matplotlib.pyplot as plt
-import numpy as np
+import folium
+import math
 
+def generate_map(user, data, radius = 5):
+    def color(availability):
+        if availability > 0.50:
+            return "green"
+        elif availability > 0.25:
+            return "orange"
+        else:
+            return "red"
 
+    def inRadius(datapoint, user, radius):
+        #1 latitude is about 111km
+        _, lat, long, _, _, _ = datapoint;
+        return (math.pow(
+            math.pow(lat - user[0], 2) + math.pow(long - user[1], 2),
+            0.5))/111 < radius
 
-def generate_map(data):
-    #data is an array of tuples (lat, long, availabiliy)
+    data = list(filter( lambda x : inRadius(x , user, radius), data))
 
-    #imgxy is the xy cordinates of the image, (Bottom Left Lat Long, Top Right Lat Long)
-    imgxy = ((1.210097, 103.597973), (1.512845, 104.088749))
-    img = plt.imread("map.png")
+    map = folium.Map(
+        location=[user[1], user[0]],
+        zoom_start=15 #15
+        )
 
-    plt.subplots()
-    plt.imshow(img, extent=[imgxy[0][1], imgxy[1][1],imgxy[0][0], imgxy[1][0]])
+    for carpark_name, lat, long, available_spaces, total_spaces, availability in data:
+        folium.Marker(
+            location = [lat, long],
+            popup = "toaster",
+            icon = folium.Icon(
+                color = color(availability),
+                icon_color = "white",
+                icon = 'car',
+                prefix = 'fa'
+            )
+        ).add_to(map)
 
-    def mapHelper(data, condition, color):
-        data = list(filter(condition, list(data)))
-
-        latAll = list(map(lambda x: x[0], data))
-        longAll = list(map(lambda x: x[1], data))
-        plt.scatter(
-            longAll,
-            latAll,
-            color = color,
-            marker = "*",
-            alpha = 0.25)
-        return
-
-    mapHelper(data, lambda x: x[2] <= 0.25, "red")
-    mapHelper(data, lambda x: 0.25 < x[2] <= 0.5, "yellow")
-    mapHelper(data, lambda x: x[2] > 0.5, "green")
-    plt.show()
+    map.save('mymap.html')
 
 if __name__ == '__main__':
-    generate_map([(1.4, 104,0.7)])
+    generate_map(
+        (103.81930441307954, 1.2926372991098132),
+        [('HE12', 1.2926372991098132, 103.81930441307954, 0, 105, 0.0)],
+        5
+        )
