@@ -9,6 +9,12 @@ from telegram import (
     Update
 )
 from text_files import *
+import parking_map
+
+import io
+from PIL import Image
+
+from usage_functions import get_carpark_data
 
 def start(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text=start_text())
@@ -24,3 +30,10 @@ def find_loc(update: Update, context: CallbackContext):
     location = (loc.longitude,loc.latitude)
     print(location)
     context.bot.send_message(chat_id=update.effective_chat.id, text="Your location is " + str(location))
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Please wait 5s for the map to be generated")
+
+    m = parking_map.generate_map(location,get_carpark_data())
+    img_data = m._to_png(5)
+    context.bot.send_photo(chat_id=update.effective_chat.id,
+    caption = "This is the map",
+    photo = img_data)

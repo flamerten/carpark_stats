@@ -12,6 +12,7 @@ def generate_map(user, data, radius = 5):
 
     def inRadius(datapoint, user, radius):
         #1 latitude is about 111km
+        #user is lat,long
         _, lat, long, _, _, _ = datapoint;
         return (math.pow(
             math.pow(lat - user[0], 2) + math.pow(long - user[1], 2),
@@ -37,6 +38,7 @@ def generate_map(user, data, radius = 5):
         ).add_to(map)
 
     map.save('mymap.html')
+    return map
 
 if __name__ == '__main__':
     generate_map(
