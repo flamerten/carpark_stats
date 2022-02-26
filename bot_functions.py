@@ -33,9 +33,13 @@ def find_loc(update: Update, context: CallbackContext):
     print(location)
     context.bot.send_message(chat_id=update.effective_chat.id, text="Your location is " + str(location))
     context.bot.send_message(chat_id=update.effective_chat.id, text="Please wait 5s for the map to be generated")
+    data = get_carpark_data()
+    if data == False:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Please try again later!")
+        return
 
-    img_data = parking_map.generate_map(location,get_carpark_data())
+    img_data = parking_map.generate_map(location,data)
     context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        caption = "This is the map",
+        caption = "These are the nearest carparks to you!",
         photo = img_data)

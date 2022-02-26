@@ -23,7 +23,7 @@ def generate_map(user, data, radius = 5):
 
     map = folium.Map(
         location=[user[1], user[0]],
-        zoom_start=16
+        zoom_start=17
         )
 
     
@@ -54,6 +54,7 @@ def generate_map(user, data, radius = 5):
     img_data = map._to_png(3)
     img = Image.open(io.BytesIO(img_data))
     img.save('image.png')
+    print("Image Saved")
     return img_data
 
 if __name__ == '__main__':
