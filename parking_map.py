@@ -1,5 +1,7 @@
 import folium
 import math
+import io
+from PIL import Image
 
 def generate_map(user, data, radius = 5):
     def color(availability):
@@ -10,15 +12,14 @@ def generate_map(user, data, radius = 5):
         else:
             return "red"
 
-    def inRadius(datapoint, user, radius):
+    def inRadius(datapoint):
         #1 latitude is about 111km
-        #user is lat,long
-        _, lat, long, _, _, _ = datapoint;
-        return (math.pow(
-            math.pow(lat - user[0], 2) + math.pow(long - user[1], 2),
-            0.5))/111 < radius
+        _, lat, long, _, _, _ = datapoint
+        return math.pow(
+            math.pow(lat - user[1], 2) + math.pow(long - user[0], 2),
+            0.5) * 111 < radius
 
-    data = list(filter( lambda x : inRadius(x , user, radius), data))
+    data = list(filter( inRadius, data))
 
     map = folium.Map(
         location=[user[1], user[0]],
@@ -37,8 +38,9 @@ def generate_map(user, data, radius = 5):
             )
         ).add_to(map)
 
-    map.save('mymap.html')
-    return map
+    img_data = map._to_png(5)
+    img = Image.open(io.BytesIO(img_data))
+    img.save('image.png')
 
 if __name__ == '__main__':
     generate_map(

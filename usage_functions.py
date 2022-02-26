@@ -80,4 +80,6 @@ def get_carpark_data():
 if __name__ == '__main__':
     import parking_map
     payload = get_carpark_data()
-    parking_map.generate_map(list(map(lambda x: (x[1], x[2], x[5]), payload)))
+    user = (103.92432685169994, 1.3339179186421388)
+    rad = 5
+    parking_map.generate_map(user, payload, rad)
