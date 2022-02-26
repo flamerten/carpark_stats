@@ -51,10 +51,10 @@ def generate_map(user, data, radius = 5):
             )
         ).add_to(map)
 
-    img_data = map._to_png(5)
+    img_data = map._to_png(3)
     img = Image.open(io.BytesIO(img_data))
     img.save('image.png')
-    print("Image generated")
+    return img_data
 
 if __name__ == '__main__':
     generate_map(
