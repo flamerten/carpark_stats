@@ -23,8 +23,10 @@ def generate_map(user, data, radius = 5):
 
     map = folium.Map(
         location=[user[1], user[0]],
-        zoom_start=15 #15
+        zoom_start=16
         )
+
+    
 
     for carpark_name, lat, long, available_spaces, total_spaces, availability in data:
         folium.Marker(
@@ -37,10 +39,22 @@ def generate_map(user, data, radius = 5):
                 prefix = 'fa'
             )
         ).add_to(map)
+    
+    folium.Marker(
+        location= [user[1],user[0]],
+        popup= "toaster",
+        icon = folium.Icon(
+                color = "blue",
+                icon_color = "white",
+                icon = 'car',
+                prefix = 'fa'
+            )
+        ).add_to(map)
 
     img_data = map._to_png(5)
     img = Image.open(io.BytesIO(img_data))
     img.save('image.png')
+    print("Image generated")
 
 if __name__ == '__main__':
     generate_map(

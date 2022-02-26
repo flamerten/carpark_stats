@@ -81,5 +81,5 @@ if __name__ == '__main__':
     import parking_map
     payload = get_carpark_data()
     user = (103.92432685169994, 1.3339179186421388)
-    rad = 5
+    rad = 1
     parking_map.generate_map(user, payload, rad)
