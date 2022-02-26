@@ -1,11 +1,13 @@
-from text_files import *
-#from functions import Mainbot
+from text_files import bot_token
+from functions import *
 
 from telegram.ext import *
 from telegram import Update
 import logging
 
-
+def addcmd(text,func):
+    handler = CommandHandler(text,func)
+    dispatcher.add_handler(handler)
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                      level=logging.INFO)
@@ -13,13 +15,14 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 updater = Updater(token = bot_token(),use_context = True)
 dispatcher = updater.dispatcher
 
-def start(update: Update, context: CallbackContext):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=start_text())
+addcmd('start',start)
+addcmd('find',get_carparks)
+addcmd('help',help_text)
 
 
-start_handler = CommandHandler('start', start)
-dispatcher.add_handler(start_handler)
-
+#for unknown commands
+unknown_handler = MessageHandler(Filters.command, unknown)
+dispatcher.add_handler(unknown_handler)
 
 updater.start_polling()
 
