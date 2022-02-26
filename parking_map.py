@@ -1,6 +1,7 @@
 import folium
 import math
-import io
+#import io
+import os
 from PIL import Image
 
 def generate_map(user, data, radius = 5):
@@ -26,12 +27,10 @@ def generate_map(user, data, radius = 5):
         zoom_start=17
         )
 
-    
-
     for carpark_name, lat, long, available_spaces, total_spaces, availability in data:
         folium.Marker(
             location = [lat, long],
-            popup = "toaster",
+            popup = carpark_name,
             icon = folium.Icon(
                 color = color(availability),
                 icon_color = "white",
@@ -39,10 +38,10 @@ def generate_map(user, data, radius = 5):
                 prefix = 'fa'
             )
         ).add_to(map)
-    
+
     folium.Marker(
         location= [user[1],user[0]],
-        popup= "toaster",
+        popup= "You Are Here!",
         icon = folium.Icon(
                 color = "blue",
                 icon_color = "white",
@@ -52,9 +51,10 @@ def generate_map(user, data, radius = 5):
         ).add_to(map)
 
     img_data = map._to_png(3)
-    img = Image.open(io.BytesIO(img_data))
-    img.save('image.png')
-    print("Image Saved")
+    #img = Image.open(io.BytesIO(img_data))
+    #img.save('image.png')
+    #print("Image Saved")
+    os.remove("geckodriver.log")
     return img_data
 
 if __name__ == '__main__':
