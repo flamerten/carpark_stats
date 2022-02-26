@@ -7,6 +7,9 @@ import pandas as pd
 from csv import reader
 import os
 
+previous_payload = []
+previous_time = datetime.datetime.now() - datetime.timedelta(minutes = 10)
+
 # Store the carpark information with the carpark name as the dictionary key
 hdb_carpark_info = dict()
 with open("hdb-carpark-information.csv") as f:
@@ -41,18 +44,15 @@ def map_carpark_name_to_latlng(name):
     return (lat, long)
 
 def get_carpark_data():
-    today = datetime.datetime.today()
-    now_epoch_time = time.time()
-    
-    file_edit_time = os.path.getmtime('carpark_avail.csv')
-    diff = now_epoch_time-file_edit_time
-    print("Time since last call: ", diff)
-    if diff < 60*5:
-        return read_csv()
-    #except:
-    #    print("No Carpark Avail csv file created")
+    global previous_payload
+    global previous_time
 
-    # Call the API
+    today = datetime.datetime.today()
+
+    if (today - previous_time).total_seconds() < 60 * 5:
+        print("Prev time retrieved")
+        return previous_payload
+
     params = {
         "date_time": today.replace(microsecond=0).isoformat() # ISO8601 date format (without microsecond)
     }
@@ -88,26 +88,17 @@ def get_carpark_data():
 
         # Save to payload
         payload.append((carpark_name, lat, long, available_spaces, total_spaces, availability))
+
+    previous_payload = payload
+    previous_time = today
+
     return payload
 
-def save_to_csv(data):
-    df = pd.DataFrame(data)
-    df.to_csv("carpark_avail.csv",index = False)
-    print("Data saved successfully")
-
-def read_csv():
-    with open('carpark_avail.csv', 'r') as read_obj:
-        csv_reader = reader(read_obj)
-
-        list_of_tuples = list(map(tuple, csv_reader))
-    
-    print(list_of_tuples[:5])
 
 # If not imported as a library, run test case
 if __name__ == '__main__':
     import parking_map
     payload = get_carpark_data()
-    save_to_csv(payload)
     user = (103.92432685169994, 1.3339179186421388)
     rad = 1
     parking_map.generate_map(user, payload, rad)
